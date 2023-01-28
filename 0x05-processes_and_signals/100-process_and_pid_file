@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# Write a Bash script that creates the file /var/run/holbertonscript.pid containing its PID
-file=/var/run/holbertonscript.pid
-trap 'echo I hate the kill command; rm $file; exit' SIGTERM
-trap 'echo Y U no love me?!' SIGINT
-trap 'rm $file; exit' SIGQUIT
-echo $$ > "$file"
-while true
+# comments go here!
+# trap: receive signal
+echo $$ >> /var/run/holbertonscript.pid
+trap "echo Y U no love me?!" SIGINT
+trap "echo I hate the kill command && rm -rf /var/run/holbertonscript.pid; exit" SIGTERM SIGQUIT
+while :
 do
-	echo To infinity and beyond
+	echo "To infinity and beyond"
 	sleep 2
 done
