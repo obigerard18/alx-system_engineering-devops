@@ -6,4 +6,4 @@ until [ $n -ge 10 ]
 do
     echo "Holberton School"
     n=$(( n + 1 ))
-done
+dones
