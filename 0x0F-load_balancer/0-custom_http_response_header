@@ -1,15 +1,30 @@
 #!/usr/bin/env bash
-# Configure Nginx so that its HTTP response contains a custom header
-# HTTP response contains a custom header (on web-01 and web-02)
-var=$(hostname)
-new_string="error_page 404 \/custom_404.html;\n location \/redirect_me {\n return 301 \$scheme:\/\/www.google.com;"
-new_string2="server {\n\tadd_header X-Served-By $var;"
+# Configure your Nginx server so that /redirect_me is redirecting to another page
+apt-get update
+apt-get install -y nginx
 
-apt-get update -y
-apt-get install nginx -y
-echo "Hello World!" > /usr/share/nginx/html/index.html
 mkdir -p /var/www/html
-echo "Ceci n'est pas une page" > /var/www/html/custom_404.html
-sudo sed -i -E "s/^[^#]+location \/ \{/$new_string/" /etc/nginx/sites-available/default
-sudo sed -i -E "s/^server \{/$new_string2/" /etc/nginx/sites-available/default
-sudo service nginx start
+touch /var/www/html/index.html
+echo "Holberton School" > /var/www/html/index.html
+touch /var/www/html/404.html
+echo "Ceci n'est pas une page" > /var/www/html/404.html
+
+printf %s "server {
+     listen 80 default_server;
+     listen [::]:80 default_server;
+     add_header X-Served-By $HOSTNAME;
+     root /var/www/html;
+     index index.html index.htm;
+     
+     location /redirect_me {
+         return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+     }
+     error_page 404 /404.html;
+     location /404 {
+         root /var/www/html;
+         internal;
+     }
+}
+" > /etc/nginx/sites-available/default
+
+service nginx restart
